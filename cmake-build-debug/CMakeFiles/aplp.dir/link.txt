@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/aplp.dir/game/cpp/main.cpp.o  -o aplp 
