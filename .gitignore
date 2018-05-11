@@ -63,3 +63,6 @@ fabric.properties
 *.so
 *~
 
+/build
+CMakeCache.txt
+
