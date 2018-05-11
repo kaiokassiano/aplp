@@ -65,4 +65,5 @@ fabric.properties
 
 /build
 CMakeCache.txt
+.vscode
 
