@@ -1,25 +1,20 @@
 #include <iostream>
-
-void clear_screen();
+#include <ncurses.h>
 
 int main() {
-    std::string x;
 
-    clear_screen();
+    initscr();
+    clear();
+    raw();
+    noecho();
 
-    printf("Press ENTER");
-    std::cin.get();
+    printw("Press something\n");
+    char c = getch();
+    printw("Pressed: %c\n", c);
 
-    clear_screen();
-
-    printf("Press ENTER again");
-    std::cin.get();
-
-    std::cout << "Bye :) " << std::endl;
+    printw("Press anything to end");
+    getch();
+    endwin();
 
     return 0;
-}
-
-void clear_screen() {
-    std::cout << "\033[2J\033[1;1H";
 }
