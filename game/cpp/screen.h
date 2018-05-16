@@ -46,10 +46,8 @@ void print_board(GameBoard* board);
  */
 bool move_user(GameBoard* board, string action);
 
-/**
- * Move the ghost based on user position 
- */
-bool move_ghosts(GameBoard* board);
+
+void move_ghosts(Pakmen::GameBoard *board, std::tuple<int, int> user_pos);
 
 } // Namespace
 

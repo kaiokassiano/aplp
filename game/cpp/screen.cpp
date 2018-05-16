@@ -1,10 +1,11 @@
 #include "screen.h"
+#include <string.h>
 
 static const int BLUE_FOREGROUND = 1;
 static const int RED_FOREGROUND = 2;
 static const int MAGENTA_FOREGROUND = 3;
 static const int YELLOW_FOREGROUND = 4;
-
+static const std::vector<std::string> MOVES = {"RIGHT", "UP", "DOWN", "LEFT"};
 void Pakmen::init_screen() {
   initscr();
   cbreak();
@@ -38,7 +39,7 @@ void Pakmen::print_board(Pakmen::GameBoard *board) {
         attron(COLOR_PAIR(YELLOW_FOREGROUND));
         printw("%s", "P");
         attroff(COLOR_PAIR(YELLOW_FOREGROUND));
-      } else if (board_cell == Pakmen::GHOST_CELL) {
+      } else if (board_cell == Pakmen::GHOST_CELL || board_cell == Pakmen::DUMMIE_GHOST_CELL) {
         if (Pakmen::powered != 1) attron(COLOR_PAIR(Pakmen::powered ? BLUE_FOREGROUND : MAGENTA_FOREGROUND));
         printw("%s", "G");
         if (Pakmen::powered != 1) attroff(COLOR_PAIR(Pakmen::powered ? BLUE_FOREGROUND : MAGENTA_FOREGROUND));
@@ -122,10 +123,38 @@ bool Pakmen::move_user(Pakmen::GameBoard *board, string action) {
     if (Pakmen::powered > 0)
       Pakmen::powered--;
   }
-  move_ghosts(board);
+  move_ghosts(board, new_pos);
   return true;
 }
 
-bool Pakmen::move_ghosts(Pakmen::GameBoard *board){
-  // MOVE GHOST
+
+void Pakmen::move_ghosts(Pakmen::GameBoard *board, std::tuple<int, int> user_pos){
+  auto dummie_pos = Pakmen::find_object(board, Pakmen::DUMMIE_GHOST_CELL);
+  auto ghost_pos = Pakmen::find_object(board, Pakmen::GHOST_CELL);
+
+  int x, y;
+
+  std::tie(y, x) = dummie_pos;
+
+  std::tuple<int, int> new_dummie_pos;
+  int move = rand() % MOVES.size();
+  if(strcmp(MOVES[move].c_str(), "UP")) {
+    new_dummie_pos = std::make_tuple(y-1, x);
+  }
+  else if(strcmp(MOVES[move].c_str(), "DOWN"))
+  {
+    new_dummie_pos = std::make_tuple(y+1, x);
+  }else if(strcmp(MOVES[move].c_str(), "LEFT"))
+  {
+    new_dummie_pos = std::make_tuple(y, x-1);
+  }else
+  {
+    new_dummie_pos = std::make_tuple(y, x+1);
+  }
+  
+  
+  if (Pakmen::is_movable_cell(board, new_dummie_pos)){
+    board->board[y][x] = Pakmen::EMPTY_CELL;
+    board->board[std::get<0>(new_dummie_pos)][std::get<1>(new_dummie_pos)] = Pakmen::DUMMIE_GHOST_CELL;
+  }
 }
