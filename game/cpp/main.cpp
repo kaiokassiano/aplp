@@ -21,23 +21,27 @@ void finish(GameBoard* board) {
 }
 
 int main() {
-  auto board = init();
+  bool finished = 0;
 
-  while (true) {
-    clear_screen();
-    print_board(board);
+  while(1){
+    auto board = init();
 
-    auto input = get_input();
+    while (!finished) {
+      clear_screen();
+      print_board(board);
 
-    if (!move_user(board, input)) {
-      print_invalid_input();
+      auto input = get_input();
+
+      if (!move_user(board, input)) {
+        print_invalid_input();
+      }
+
+      if (is_finished(board))
+        finished = 1;
     }
 
-    if (is_finished(board))
-      break;
+    finish(board);
   }
-
-  finish(board);
 
   return 0;
 }

@@ -49,6 +49,11 @@ bool move_user(GameBoard* board, string action);
 
 void move_ghosts(Pakmen::GameBoard *board, std::tuple<int, int> user_pos);
 
+/**
+ * Print the current and the highest score
+ */
+void print_score();
+
 } // Namespace
 
 #endif // PAKMEN_SCREEN_H

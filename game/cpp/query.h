@@ -22,6 +22,16 @@ namespace Pakmen {
  */
   bool is_movable_cell(GameBoard *board, std::tuple<int, int> pos);
 
+/**
+ * Check if the specified position is a ball the user can eat
+ */
+  bool is_eatable_cell(GameBoard *board, std::tuple<int, int> pos);
+
+/**
+ * Check if the specified position is a cherry the user can eat
+ */
+  bool is_eatable_cherry_cell(GameBoard *board, std::tuple<int, int> pos);
+
 } // Namespace
 
 #endif // PAKMEN_QUERY_H

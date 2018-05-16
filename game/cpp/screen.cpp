@@ -6,6 +6,10 @@ static const int RED_FOREGROUND = 2;
 static const int MAGENTA_FOREGROUND = 3;
 static const int YELLOW_FOREGROUND = 4;
 static const std::vector<std::string> MOVES = {"RIGHT", "UP", "DOWN", "LEFT"};
+
+int current_score = 0;
+int highest_score = 0;
+
 void Pakmen::init_screen() {
   initscr();
   cbreak();
@@ -69,6 +73,7 @@ void Pakmen::print_board(Pakmen::GameBoard *board) {
     }
   }
 
+  print_score();
   refresh();
 }
 
@@ -82,7 +87,7 @@ string getstring() {
 }
 
 string Pakmen::get_input() {
-  printw("Where do you want to go? (move with w, a, s, d)\n");
+  printw("\nWhere do you want to go? (move with w, a, s, d)\n");
 
   return getstring();
 }
@@ -114,14 +119,24 @@ bool Pakmen::move_user(Pakmen::GameBoard *board, string action) {
   else
     return false;
 
+  if (Pakmen::is_eatable_cell(board, new_pos)) {
+    current_score +=1;
+  }
+
+  if (Pakmen::is_eatable_cherry_cell(board, new_pos)) {
+    current_score += 10;
+  }
+
   if (Pakmen::is_movable_cell(board, new_pos)) {
     if (board->board[std::get<0>(new_pos)][std::get<1>(new_pos)] == Pakmen::POWER_CELL) {
       Pakmen::powered = Pakmen::POWERED_TIME;
     }
     board->board[y][x] = Pakmen::EMPTY_CELL;
     board->board[std::get<0>(new_pos)][std::get<1>(new_pos)] = Pakmen::USER_CELL;
-    if (Pakmen::powered > 0)
+    if (Pakmen::powered > 0){
       Pakmen::powered--;
+    }
+
   }
   move_ghosts(board, new_pos);
   return true;
@@ -157,4 +172,9 @@ void Pakmen::move_ghosts(Pakmen::GameBoard *board, std::tuple<int, int> user_pos
     board->board[y][x] = Pakmen::EMPTY_CELL;
     board->board[std::get<0>(new_dummie_pos)][std::get<1>(new_dummie_pos)] = Pakmen::DUMMIE_GHOST_CELL;
   }
+}
+
+void Pakmen::print_score() {
+  printw("\nYour score: %d", current_score);
+  printw("\nHighest score: %d\n", highest_score);
 }
