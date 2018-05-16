@@ -122,7 +122,10 @@ bool Pakmen::move_user(Pakmen::GameBoard *board, string action) {
     if (Pakmen::powered > 0)
       Pakmen::powered--;
   }
-
+  move_ghosts(board);
   return true;
 }
 
+bool Pakmen::move_ghosts(Pakmen::GameBoard *board){
+  // MOVE GHOST
+}

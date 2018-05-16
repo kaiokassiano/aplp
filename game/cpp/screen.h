@@ -46,6 +46,11 @@ void print_board(GameBoard* board);
  */
 bool move_user(GameBoard* board, string action);
 
+/**
+ * Move the ghost based on user position 
+ */
+bool move_ghosts(GameBoard* board);
+
 } // Namespace
 
 #endif // PAKMEN_SCREEN_H
