@@ -92,6 +92,8 @@ void Pakmen::print_invalid_input() {
 }
 
 bool Pakmen::move_user(Pakmen::GameBoard *board, string action) {
+  char c = std::tolower(action.c_str()[0]);
+
   auto user_pos = Pakmen::find_object(board, Pakmen::USER_CELL);
 
   int x, y;
@@ -100,13 +102,13 @@ bool Pakmen::move_user(Pakmen::GameBoard *board, string action) {
 
   std::tuple<int, int> new_pos;
 
-  if (action == "w")
+  if (c == 'w')
     new_pos = std::make_tuple(y - 1, x);
-  else if (action == "s")
+  else if (c == 's')
     new_pos = std::make_tuple(y + 1, x);
-  else if (action == "a")
+  else if (c == 'a')
     new_pos = std::make_tuple(y, x - 1);
-  else if (action == "d")
+  else if (c == 'd')
     new_pos = std::make_tuple(y, x + 1);
   else
     return false;
