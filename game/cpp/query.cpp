@@ -13,7 +13,7 @@ std::tuple<int, int> Pakmen::find_object(Pakmen::GameBoard* board, int object) {
   return std::make_tuple(-1, -1);
 }
 
-std::vector<std::tuple<int, int>> Pakmen::find_all_object(Pakmen::GameBoard* board, int object) {
+std::vector<std::tuple<int, int>> Pakmen::find_all_objects(Pakmen::GameBoard* board, int object) {
   std::vector<std::tuple<int, int>> list;
 
   for (int i = 0; i < Pakmen::BOARD_HEIGHT; i++) {

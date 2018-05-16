@@ -1,6 +1,7 @@
 #include "screen.h"
 #include "model.h"
 #include "query.h"
+#include "utils.h"
 
 using namespace Pakmen;
 
@@ -32,7 +33,7 @@ int main() {
       print_invalid_input();
     }
 
-    if (board->is_finished())
+    if (is_finished(board))
       break;
   }
 
