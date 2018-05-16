@@ -1,6 +1,8 @@
 #ifndef PAKMEN_MODEL_H
 #define PAKMEN_MODEL_H
 
+#include "query.h"
+
 namespace Pakmen {
 
   static const int WALL_CELL = -1;
@@ -20,15 +22,7 @@ namespace Pakmen {
  */
   class GameBoard {
   public:
-    bool is_finished() {
-      bool has_eatable = false;
-      for (int i = 1; i < BOARD_HEIGHT - 1; i++) {
-        for (int j = 1; j < BOARD_WIDTH - 1; j++) {
-          has_eatable = has_eatable || (this->board[i][j] == Pakmen::EATABLE_CELL);
-        }
-      }
-      return !has_eatable;
-    };
+    bool is_finished();
 
     int board[BOARD_HEIGHT][BOARD_WIDTH] = {
             {WALL_CELL, WALL_CELL,    WALL_CELL,    WALL_CELL,    WALL_CELL,    WALL_CELL,    WALL_CELL},
