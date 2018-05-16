@@ -1,5 +1,7 @@
 #include "query.h"
 
+int Pakmen::powered = 0;
+
 std::tuple<int, int> Pakmen::find_object(Pakmen::GameBoard* board, int object) {
   for (int i = 0; i < Pakmen::BOARD_HEIGHT; i++) {
     for (int j = 0; j < Pakmen::BOARD_WIDTH; j++) {
@@ -38,8 +40,5 @@ bool Pakmen::is_movable_cell(Pakmen::GameBoard* board, std::tuple<int, int> pos)
     return false;
 
   // TODO: verify is the user is in enpowered-mode
-  if (board_cell == Pakmen::GHOST_CELL)
-    return false;
-
-  return true;
+  return (board_cell != Pakmen::GHOST_CELL) || Pakmen::powered != 0;
 }

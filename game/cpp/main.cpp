@@ -15,6 +15,7 @@ GameBoard* init() {
 void finish(GameBoard* board) {
   delete board;
 
+  clear_screen();
   finish_screen();
 }
 
@@ -31,7 +32,7 @@ int main() {
       print_invalid_input();
     }
 
-    if (board->is_finished)
+    if (board->is_finished())
       break;
   }
 
