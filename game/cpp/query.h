@@ -32,6 +32,8 @@ namespace Pakmen {
  */
   bool is_eatable_cherry_cell(GameBoard *board, std::tuple<int, int> pos);
 
+  bool is_player_cell(GameBoard *board, std::tuple<int, int> pos);
+
 } // Namespace
 
 #endif // PAKMEN_QUERY_H

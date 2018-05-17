@@ -26,6 +26,13 @@ std::vector<std::tuple<int, int>> Pakmen::find_all_objects(Pakmen::GameBoard* bo
   return list;
 }
 
+bool Pakmen::is_player_cell(Pakmen::GameBoard* board, std::tuple<int, int> pos)  {
+  int x, y;
+
+  std::tie (y, x) = pos;
+  return board->board[y][x] == Pakmen::USER_CELL;
+}
+
 bool Pakmen::is_movable_cell(Pakmen::GameBoard* board, std::tuple<int, int> pos) {
   int x, y;
 

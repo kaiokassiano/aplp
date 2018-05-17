@@ -10,6 +10,8 @@ using std::string;
 
 namespace Pakmen {
 
+int get_move(Pakmen::GameBoard *board, std::tuple<int, int> ghost, std::tuple<int, int> user);
+
 /**
  * Initialized the screen with the ncurses library, allocating
  * required resources
