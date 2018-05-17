@@ -21,7 +21,7 @@ void init_screen();
 /**
  * Finalized the screen, freeing up used memory
  */
-void finish_screen();
+void finish_screen(bool lost);
 
 /**
  * Clears the screen

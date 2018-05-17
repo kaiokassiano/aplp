@@ -27,15 +27,20 @@ void Pakmen::init_screen()
   init_pair(YELLOW_FOREGROUND, COLOR_YELLOW, COLOR_BLACK);
 }
 
-void Pakmen::finish_screen()
+void Pakmen::finish_screen(bool lost)
 {
-  if (current_score > highest_score)
-  {
-    highest_score = current_score;
+  echo();
+  if(lost){
+    printw("Perdeu irmao!");
+  }else{
+    if (current_score > highest_score)
+    {
+      highest_score = current_score;
+    }
+
+    printw("Congratulations! You won!\nPress ENTER to finish!");
   }
 
-  echo();
-  printw("Congratulations! You won!\nPress ENTER to finish!");
   getch();
   endwin();
 }
@@ -184,7 +189,6 @@ void Pakmen::move_ghosts(Pakmen::GameBoard *board, std::tuple<int, int> user_pos
 {
   auto dummie_pos = Pakmen::find_object(board, Pakmen::DUMMIE_GHOST_CELL);
   auto ghost_pos = Pakmen::find_object(board, Pakmen::GHOST_CELL);
-
   int x, y;
 
   std::tie(y, x) = dummie_pos;
@@ -207,20 +211,17 @@ void Pakmen::move_ghosts(Pakmen::GameBoard *board, std::tuple<int, int> user_pos
   {
     new_dummie_pos = std::make_tuple(y, x + 1);
   }
-  // if(Pakmen::is_player_cell(board, new_dummie_pos)){ // Game over
-    
-  // }
-  if (Pakmen::is_movable_cell(board, new_dummie_pos))
+
+  if (board->board[std::get<0>(new_dummie_pos)][std::get<1>(new_dummie_pos)] != Pakmen::WALL_CELL)
   {
     board->board[y][x] = Pakmen::EATABLE_CELL;
     board->board[std::get<0>(new_dummie_pos)][std::get<1>(new_dummie_pos)] = Pakmen::DUMMIE_GHOST_CELL;
   }
-
   int ghost_move = Pakmen::get_move(board, ghost_pos, user_pos);
   std::tuple<int, int> new_ghost_pos;
   int ghost_x, ghost_y;
-
-  std::tie(ghost_x, ghost_y) = ghost_pos;
+  
+  std::tie(ghost_y, ghost_x) = ghost_pos;
   if (ghost_move ==  UP)
   {
     new_ghost_pos = std::make_tuple(ghost_y - 1, ghost_x);
@@ -238,21 +239,17 @@ void Pakmen::move_ghosts(Pakmen::GameBoard *board, std::tuple<int, int> user_pos
     new_ghost_pos = std::make_tuple(ghost_y, ghost_x + 1);
   }
 
-  // if(Pakmen::is_player_cell(board, new_ghost_pos)){ // Game over
-    
-  // }
-
-  if (Pakmen::is_movable_cell(board, new_ghost_pos))
+  if (board->board[std::get<0>(new_ghost_pos)][std::get<1>(new_ghost_pos)] != Pakmen::WALL_CELL)
   {
-    board->board[y][x] = Pakmen::EATABLE_CELL;
+    board->board[ghost_y][ghost_x] = Pakmen::EATABLE_CELL;
     board->board[std::get<0>(new_ghost_pos)][std::get<1>(new_ghost_pos)] = Pakmen::GHOST_CELL;
   }
 }
 
 int Pakmen::get_move(Pakmen::GameBoard *board, std::tuple<int, int> ghost, std::tuple<int, int> user){
   int ghost_x, ghost_y, user_x, user_y;
-  std::tie(ghost_x, ghost_y) = ghost;
-  std::tie(user_x, user_y) = user;
+  std::tie(ghost_y, ghost_x) = ghost;
+  std::tie(user_y, user_x) = user;
 
   if(ghost_y == user_y){ // Mesma linha
     if (ghost_x < user_x){

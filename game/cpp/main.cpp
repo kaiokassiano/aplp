@@ -14,19 +14,19 @@ GameBoard *init()
   return board;
 }
 
-void finish(GameBoard *board)
+void finish(GameBoard *board, bool lost)
 {
   delete board;
 
   clear_screen();
-  finish_screen();
+  finish_screen(lost);
 }
 
 int main()
 {
   while (1)
   {
-    bool finished = 0;
+    bool finished, lost = 0;
 
     auto board = init();
 
@@ -44,9 +44,16 @@ int main()
 
       if (is_finished(board))
         finished = 1;
-    }
 
-    finish(board);
+      if(Pakmen::find_object(board, Pakmen::USER_CELL) == std::make_tuple(-1, -1)){
+        finished, lost = 1;
+      }
+    }
+    if(lost){
+      finish(board, true);
+    }else {
+      finish(board, false);
+    }
   }
 
   return 0;

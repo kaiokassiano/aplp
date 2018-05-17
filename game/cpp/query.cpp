@@ -1,5 +1,4 @@
 #include "query.h"
-
 int Pakmen::powered = 0;
 
 std::tuple<int, int> Pakmen::find_object(Pakmen::GameBoard* board, int object) {
