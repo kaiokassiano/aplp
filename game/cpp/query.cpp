@@ -58,7 +58,6 @@ bool Pakmen::is_eatable_cell(Pakmen::GameBoard* board, std::tuple<int, int> pos)
     return false;
   }
 
-  printf("%d", board_cell);
   return (board_cell == Pakmen::EATABLE_CELL || board_cell == Pakmen::POWER_CELL);
 }
 
@@ -77,6 +76,5 @@ bool Pakmen::is_eatable_cherry_cell(Pakmen::GameBoard* board, std::tuple<int, in
     return false;
   }
 
-  printf("%d", board_cell);
   return (board_cell == Pakmen::CHERRY_CELL);
 }

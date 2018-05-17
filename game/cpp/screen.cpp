@@ -10,7 +10,8 @@ static const std::vector<std::string> MOVES = {"RIGHT", "UP", "DOWN", "LEFT"};
 int current_score = 0;
 int highest_score = 0;
 
-void Pakmen::init_screen() {
+void Pakmen::init_screen()
+{
   initscr();
   cbreak();
   noecho();
@@ -23,43 +24,68 @@ void Pakmen::init_screen() {
   init_pair(YELLOW_FOREGROUND, COLOR_YELLOW, COLOR_BLACK);
 }
 
-void Pakmen::finish_screen() {
+void Pakmen::finish_screen()
+{
+  if (current_score > highest_score)
+  {
+    highest_score = current_score;
+  }
+
   echo();
-  printw("Congatulations! You won! Press ENTER to finish!");
+  printw("Congratulations! You won!\nPress ENTER to finish!");
   getch();
   endwin();
 }
 
-void Pakmen::clear_screen() {
+void Pakmen::clear_screen()
+{
   clear();
 }
 
-void Pakmen::print_board(Pakmen::GameBoard *board) {
-  for (int i = 0; i < Pakmen::BOARD_HEIGHT; i++) {
-    for (int j = 0; j < Pakmen::BOARD_WIDTH; j++) {
+void Pakmen::print_board(Pakmen::GameBoard *board)
+{
+  for (int i = 0; i < Pakmen::BOARD_HEIGHT; i++)
+  {
+    for (int j = 0; j < Pakmen::BOARD_WIDTH; j++)
+    {
       int board_cell = board->board[i][j];
 
-      if (board_cell == Pakmen::USER_CELL) {
+      if (board_cell == Pakmen::USER_CELL)
+      {
         attron(COLOR_PAIR(YELLOW_FOREGROUND));
         printw("%s", "P");
         attroff(COLOR_PAIR(YELLOW_FOREGROUND));
-      } else if (board_cell == Pakmen::GHOST_CELL || board_cell == Pakmen::DUMMIE_GHOST_CELL) {
-        if (Pakmen::powered != 1) attron(COLOR_PAIR(Pakmen::powered ? BLUE_FOREGROUND : MAGENTA_FOREGROUND));
+      }
+      else if (board_cell == Pakmen::GHOST_CELL || board_cell == Pakmen::DUMMIE_GHOST_CELL)
+      {
+        if (Pakmen::powered != 1)
+          attron(COLOR_PAIR(Pakmen::powered ? BLUE_FOREGROUND : MAGENTA_FOREGROUND));
         printw("%s", "G");
-        if (Pakmen::powered != 1) attroff(COLOR_PAIR(Pakmen::powered ? BLUE_FOREGROUND : MAGENTA_FOREGROUND));
-      } else if (board_cell == Pakmen::CHERRY_CELL) {
+        if (Pakmen::powered != 1)
+          attroff(COLOR_PAIR(Pakmen::powered ? BLUE_FOREGROUND : MAGENTA_FOREGROUND));
+      }
+      else if (board_cell == Pakmen::CHERRY_CELL)
+      {
         attron(COLOR_PAIR(RED_FOREGROUND));
         printw("%s", "C");
         attroff(COLOR_PAIR(RED_FOREGROUND));
-      } else if (board_cell == Pakmen::EMPTY_CELL) {
+      }
+      else if (board_cell == Pakmen::EMPTY_CELL)
+      {
         printw("%s", " ");
-      } else if (board_cell == Pakmen::EATABLE_CELL) {
+      }
+      else if (board_cell == Pakmen::EATABLE_CELL)
+      {
         printw("%s", ".");
-      } else if (board_cell == Pakmen::POWER_CELL) {
+      }
+      else if (board_cell == Pakmen::POWER_CELL)
+      {
         attron(A_BOLD);
         printw("%s", "O");
         attroff(A_BOLD);
-      } else if (board_cell == Pakmen::WALL_CELL) {
+      }
+      else if (board_cell == Pakmen::WALL_CELL)
+      {
         attron(A_BOLD);
         attron(COLOR_PAIR(BLUE_FOREGROUND));
         printw("%s", "#");
@@ -67,7 +93,8 @@ void Pakmen::print_board(Pakmen::GameBoard *board) {
         attroff(A_BOLD);
       }
 
-      if (j == Pakmen::BOARD_WIDTH - 1) {
+      if (j == Pakmen::BOARD_WIDTH - 1)
+      {
         printw("\n");
       }
     }
@@ -77,7 +104,8 @@ void Pakmen::print_board(Pakmen::GameBoard *board) {
   refresh();
 }
 
-string getstring() {
+string getstring()
+{
   string input;
 
   int ch = getch();
@@ -86,18 +114,21 @@ string getstring() {
   return input;
 }
 
-string Pakmen::get_input() {
+string Pakmen::get_input()
+{
   printw("\nWhere do you want to go? (move with w, a, s, d)\n");
 
   return getstring();
 }
 
-void Pakmen::print_invalid_input() {
+void Pakmen::print_invalid_input()
+{
   printw("Invalid input.");
   refresh();
 }
 
-bool Pakmen::move_user(Pakmen::GameBoard *board, string action) {
+bool Pakmen::move_user(Pakmen::GameBoard *board, string action)
+{
   char c = std::tolower(action.c_str()[0]);
 
   auto user_pos = Pakmen::find_object(board, Pakmen::USER_CELL);
@@ -119,31 +150,35 @@ bool Pakmen::move_user(Pakmen::GameBoard *board, string action) {
   else
     return false;
 
-  if (Pakmen::is_eatable_cell(board, new_pos)) {
-    current_score +=1;
+  if (Pakmen::is_eatable_cell(board, new_pos))
+  {
+    current_score += 1;
   }
 
-  if (Pakmen::is_eatable_cherry_cell(board, new_pos)) {
+  if (Pakmen::is_eatable_cherry_cell(board, new_pos))
+  {
     current_score += 10;
   }
 
-  if (Pakmen::is_movable_cell(board, new_pos)) {
-    if (board->board[std::get<0>(new_pos)][std::get<1>(new_pos)] == Pakmen::POWER_CELL) {
+  if (Pakmen::is_movable_cell(board, new_pos))
+  {
+    if (board->board[std::get<0>(new_pos)][std::get<1>(new_pos)] == Pakmen::POWER_CELL)
+    {
       Pakmen::powered = Pakmen::POWERED_TIME;
     }
     board->board[y][x] = Pakmen::EMPTY_CELL;
     board->board[std::get<0>(new_pos)][std::get<1>(new_pos)] = Pakmen::USER_CELL;
-    if (Pakmen::powered > 0){
+    if (Pakmen::powered > 0)
+    {
       Pakmen::powered--;
     }
-
   }
   move_ghosts(board, new_pos);
   return true;
 }
 
-
-void Pakmen::move_ghosts(Pakmen::GameBoard *board, std::tuple<int, int> user_pos){
+void Pakmen::move_ghosts(Pakmen::GameBoard *board, std::tuple<int, int> user_pos)
+{
   auto dummie_pos = Pakmen::find_object(board, Pakmen::DUMMIE_GHOST_CELL);
   auto ghost_pos = Pakmen::find_object(board, Pakmen::GHOST_CELL);
 
@@ -153,28 +188,32 @@ void Pakmen::move_ghosts(Pakmen::GameBoard *board, std::tuple<int, int> user_pos
 
   std::tuple<int, int> new_dummie_pos;
   int move = rand() % MOVES.size();
-  if(strcmp(MOVES[move].c_str(), "UP")) {
-    new_dummie_pos = std::make_tuple(y-1, x);
+  if (strcmp(MOVES[move].c_str(), "UP"))
+  {
+    new_dummie_pos = std::make_tuple(y - 1, x);
   }
-  else if(strcmp(MOVES[move].c_str(), "DOWN"))
+  else if (strcmp(MOVES[move].c_str(), "DOWN"))
   {
-    new_dummie_pos = std::make_tuple(y+1, x);
-  }else if(strcmp(MOVES[move].c_str(), "LEFT"))
-  {
-    new_dummie_pos = std::make_tuple(y, x-1);
-  }else
-  {
-    new_dummie_pos = std::make_tuple(y, x+1);
+    new_dummie_pos = std::make_tuple(y + 1, x);
   }
-  
-  
-  if (Pakmen::is_movable_cell(board, new_dummie_pos)){
+  else if (strcmp(MOVES[move].c_str(), "LEFT"))
+  {
+    new_dummie_pos = std::make_tuple(y, x - 1);
+  }
+  else
+  {
+    new_dummie_pos = std::make_tuple(y, x + 1);
+  }
+
+  if (Pakmen::is_movable_cell(board, new_dummie_pos))
+  {
     board->board[y][x] = Pakmen::EMPTY_CELL;
     board->board[std::get<0>(new_dummie_pos)][std::get<1>(new_dummie_pos)] = Pakmen::DUMMIE_GHOST_CELL;
   }
 }
 
-void Pakmen::print_score() {
+void Pakmen::print_score()
+{
   printw("\nYour score: %d", current_score);
   printw("\nHighest score: %d\n", highest_score);
 }
