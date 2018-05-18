@@ -29,7 +29,6 @@ int main()
     bool finished, lost = 0;
 
     auto board = init();
-
     while (!finished)
     {
       clear_screen();
@@ -45,8 +44,9 @@ int main()
       if (is_finished(board))
         finished = 1;
 
-      if(Pakmen::find_object(board, Pakmen::USER_CELL) == std::make_tuple(-1, -1)){
-        finished, lost = 1;
+      if(Pakmen::is_game_over(board)){
+        finished = 1;
+        lost = 1;
       }
     }
     if(lost){

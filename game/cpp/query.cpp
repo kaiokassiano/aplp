@@ -1,6 +1,16 @@
 #include "query.h"
 int Pakmen::powered = 0;
 
+bool Pakmen::is_game_over(GameBoard *board) {
+  for (int i = 0; i < Pakmen::BOARD_HEIGHT; i++) {
+    for (int j = 0; j < Pakmen::BOARD_WIDTH; j++) {
+      if (board->board[i][j] == Pakmen::USER_CELL)
+        return false;
+    }
+  }
+  return true;
+}
+
 std::tuple<int, int> Pakmen::find_object(Pakmen::GameBoard* board, int object) {
   for (int i = 0; i < Pakmen::BOARD_HEIGHT; i++) {
     for (int j = 0; j < Pakmen::BOARD_WIDTH; j++) {

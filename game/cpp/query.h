@@ -12,6 +12,8 @@ namespace Pakmen {
  */
   std::tuple<int, int> find_object(GameBoard *board, int object);
 
+  bool is_game_over(GameBoard *board);
+
 /**
  * Find all the occurrences of the object from the Pakmen::GameBoard
  */
