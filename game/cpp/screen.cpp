@@ -169,19 +169,29 @@ bool Pakmen::move_user(Pakmen::GameBoard *board, string action)
     current_score += 10;
   }
 
+  int new_x, new_y;
+
+  std::tie (new_y, new_x) = new_pos;
+
   if (Pakmen::is_movable_cell(board, new_pos))
   {
-    if (board->board[std::get<0>(new_pos)][std::get<1>(new_pos)] == Pakmen::POWER_CELL)
+    if (board->board[new_y][new_x] == Pakmen::POWER_CELL)
     {
       board->powered = Pakmen::POWERED_TIME;
     }
     board->board[y][x] = Pakmen::EMPTY_CELL;
-    board->board[std::get<0>(new_pos)][std::get<1>(new_pos)] = Pakmen::USER_CELL;
+    board->board[new_y][new_x] = Pakmen::USER_CELL;
     if (board->powered > 0)
     {
       board->powered--;
     }
   }
+  else if (board->board[new_y][new_x] == Pakmen::GHOST_CELL || board->board[new_y][new_x] == Pakmen::DUMMIE_GHOST_CELL)
+  {
+    board->board[y][x] = Pakmen::EMPTY_CELL;
+    return true;
+  }
+
   move_ghosts(board, user_pos);
   if(std::get<0>(Pakmen::find_object(board, Pakmen::GHOST_CELL)) == -1){
     board->board[3][9] = Pakmen::GHOST_CELL;
@@ -229,6 +239,10 @@ void move_dummy_ghost(Pakmen::GameBoard* board, std::tuple<int, int> user_pos)
     int old_cell = board->board[new_y][new_x];
     int ghost_cell = board->board[y][x];
 
+    if (old_cell == Pakmen::USER_CELL) {
+      old_cell = Pakmen::EMPTY_CELL;
+    }
+
     board->board[new_y][new_x] = ghost_cell;
     board->board[y][x] = old_cell;
   }
@@ -268,6 +282,10 @@ void move_normal_ghost(Pakmen::GameBoard* board, std::tuple<int, int> user_pos)
   {
     int old_cell = board->board[new_y][new_x];
     int ghost_cell = board->board[ghost_y][ghost_x];
+
+    if (old_cell == Pakmen::USER_CELL) {
+      old_cell = Pakmen::EMPTY_CELL;
+    }
 
     board->board[new_y][new_x] = ghost_cell;
     board->board[ghost_y][ghost_x] = old_cell;
