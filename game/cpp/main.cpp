@@ -26,8 +26,8 @@ int main()
 {
   while (1)
   {
-    bool finished = 0;
-    bool lost = 0;
+    int finished = 0;
+    int lost = 0;
 
     auto board = init();
     while (!finished)

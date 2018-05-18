@@ -30,14 +30,15 @@ void Pakmen::init_screen()
 void Pakmen::finish_screen(bool lost)
 {
   echo();
+  if (current_score > highest_score)
+  {
+    highest_score = current_score;
+  }
+
   if(lost){
+    current_score = 0;
     printw("Perdeu irmao!");
   }else{
-    if (current_score > highest_score)
-    {
-      highest_score = current_score;
-    }
-
     printw("Congratulations! You won!\nPress ENTER to finish!");
   }
 
@@ -214,7 +215,8 @@ void Pakmen::move_ghosts(Pakmen::GameBoard *board, std::tuple<int, int> user_pos
 
   if (board->board[std::get<0>(new_dummie_pos)][std::get<1>(new_dummie_pos)] != Pakmen::WALL_CELL)
   {
-    board->board[y][x] = Pakmen::EATABLE_CELL;
+    board->board[y][x] = board->temp_dummie;
+    board->temp_dummie = board->board[std::get<0>(new_dummie_pos)][std::get<1>(new_dummie_pos)];
     board->board[std::get<0>(new_dummie_pos)][std::get<1>(new_dummie_pos)] = Pakmen::DUMMIE_GHOST_CELL;
   }
   int ghost_move = Pakmen::get_move(board, ghost_pos, user_pos);
@@ -241,7 +243,8 @@ void Pakmen::move_ghosts(Pakmen::GameBoard *board, std::tuple<int, int> user_pos
 
   if (board->board[std::get<0>(new_ghost_pos)][std::get<1>(new_ghost_pos)] != Pakmen::WALL_CELL)
   {
-    board->board[ghost_y][ghost_x] = Pakmen::EATABLE_CELL;
+    board->board[ghost_y][ghost_x] = board->temp_ghost;
+    board->temp_ghost = board->board[std::get<0>(new_ghost_pos)][std::get<1>(new_ghost_pos)];
     board->board[std::get<0>(new_ghost_pos)][std::get<1>(new_ghost_pos)] = Pakmen::GHOST_CELL;
   }
 }

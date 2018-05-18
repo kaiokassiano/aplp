@@ -37,6 +37,8 @@ namespace Pakmen {
             {WALL_CELL, EATABLE_CELL, EATABLE_CELL, EATABLE_CELL, EATABLE_CELL, EATABLE_CELL, EATABLE_CELL, EATABLE_CELL, EATABLE_CELL, EATABLE_CELL, EATABLE_CELL, EATABLE_CELL, WALL_CELL},
             {WALL_CELL, WALL_CELL,    WALL_CELL,    WALL_CELL,    WALL_CELL,    WALL_CELL,    WALL_CELL,    WALL_CELL,    WALL_CELL,    WALL_CELL,    WALL_CELL,    WALL_CELL,    WALL_CELL},
     };
+    int temp_dummie = Pakmen::EMPTY_CELL;
+    int temp_ghost = Pakmen::EMPTY_CELL;
   };
 
   extern int powered;
