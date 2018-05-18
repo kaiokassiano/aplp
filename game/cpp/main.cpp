@@ -26,7 +26,8 @@ int main()
 {
   while (1)
   {
-    bool finished, lost = 0;
+    bool finished = 0;
+    bool lost = 0;
 
     auto board = init();
     while (!finished)
@@ -41,17 +42,17 @@ int main()
         print_invalid_input();
       }
 
-      if (is_finished(board))
-        finished = 1;
 
       if(Pakmen::is_game_over(board)){
         finished = 1;
         lost = 1;
       }
+      if (is_finished(board))
+        finished = 1;
     }
-    if(lost){
+    if (lost) {
       finish(board, true);
-    }else {
+    } else {
       finish(board, false);
     }
   }
