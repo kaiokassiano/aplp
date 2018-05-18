@@ -36,6 +36,8 @@ namespace Pakmen {
 
   bool is_player_cell(GameBoard *board, std::tuple<int, int> pos);
 
+  bool is_ghost_movable_cell(GameBoard* board, std::tuple<int, int> pos);
+
 } // Namespace
 
 #endif // PAKMEN_QUERY_H

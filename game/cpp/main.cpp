@@ -30,6 +30,7 @@ int main()
     int lost = 0;
 
     auto board = init();
+
     while (!finished)
     {
       clear_screen();
@@ -42,8 +43,7 @@ int main()
         print_invalid_input();
       }
 
-
-      if(Pakmen::is_game_over(board)){
+      if (Pakmen::is_game_over(board)) {
         finished = 1;
         lost = 1;
       }

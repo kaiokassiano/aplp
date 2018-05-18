@@ -1,5 +1,4 @@
 #include "query.h"
-int Pakmen::powered = 0;
 
 bool Pakmen::is_game_over(GameBoard *board) {
   for (int i = 0; i < Pakmen::BOARD_HEIGHT; i++) {
@@ -42,6 +41,19 @@ bool Pakmen::is_player_cell(Pakmen::GameBoard* board, std::tuple<int, int> pos) 
   return board->board[y][x] == Pakmen::USER_CELL;
 }
 
+bool Pakmen::is_ghost_movable_cell(Pakmen::GameBoard* board, std::tuple<int, int> pos) {
+  int x, y;
+
+  std::tie (y, x) = pos;
+
+  if (x < 0 || y < 0)
+    return false;
+
+  int board_cell = board->board[y][x];
+
+  return board_cell == Pakmen::WALL_CELL;
+}
+
 bool Pakmen::is_movable_cell(Pakmen::GameBoard* board, std::tuple<int, int> pos) {
   int x, y;
 
@@ -55,8 +67,7 @@ bool Pakmen::is_movable_cell(Pakmen::GameBoard* board, std::tuple<int, int> pos)
   if (board_cell == Pakmen::WALL_CELL)
     return false;
 
-  // TODO: verify is the user is in enpowered-mode
-  return (board_cell != Pakmen::GHOST_CELL) || Pakmen::powered != 0;
+  return (board_cell != Pakmen::GHOST_CELL) || board->powered != 0;
 }
 
 bool Pakmen::is_eatable_cell(Pakmen::GameBoard* board, std::tuple<int, int> pos) {

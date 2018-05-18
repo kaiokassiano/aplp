@@ -11,6 +11,7 @@ namespace Pakmen {
   static const int CHERRY_CELL = 4;
   static const int EMPTY_CELL = 5;
   static const int POWER_CELL = 6;
+
   static const int POWERED_TIME = 10;
 
   static const int BOARD_WIDTH = 13;
@@ -39,9 +40,8 @@ namespace Pakmen {
     };
     int temp_dummie = Pakmen::EMPTY_CELL;
     int temp_ghost = Pakmen::EMPTY_CELL;
+    int powered = 0;
   };
-
-  extern int powered;
 } // namespace
 
 #endif // PAKMEN_MODEL_H
