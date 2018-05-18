@@ -51,7 +51,7 @@ bool Pakmen::is_ghost_movable_cell(Pakmen::GameBoard* board, std::tuple<int, int
 
   int board_cell = board->board[y][x];
 
-  return board_cell == Pakmen::WALL_CELL;
+  return board_cell != Pakmen::WALL_CELL;
 }
 
 bool Pakmen::is_movable_cell(Pakmen::GameBoard* board, std::tuple<int, int> pos) {
@@ -67,7 +67,7 @@ bool Pakmen::is_movable_cell(Pakmen::GameBoard* board, std::tuple<int, int> pos)
   if (board_cell == Pakmen::WALL_CELL)
     return false;
 
-  return (board_cell != Pakmen::GHOST_CELL) || board->powered != 0;
+  return (board_cell != Pakmen::GHOST_CELL && board_cell != Pakmen::DUMMIE_GHOST_CELL) || board->powered != 0;
 }
 
 bool Pakmen::is_eatable_cell(Pakmen::GameBoard* board, std::tuple<int, int> pos) {

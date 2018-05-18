@@ -3,6 +3,7 @@
 
 #include <ncurses.h>
 #include <string>
+#include <algorithm>
 #include "query.h"
 #include "model.h"
 

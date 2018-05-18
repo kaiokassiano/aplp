@@ -220,11 +220,17 @@ void move_dummy_ghost(Pakmen::GameBoard* board, std::tuple<int, int> user_pos)
     new_dummie_pos = std::make_tuple(y, x + 1);
   }
 
+  int new_y, new_x;
+
+  std::tie (new_y, new_x) = new_dummie_pos;
+
   if (Pakmen::is_ghost_movable_cell(board, new_dummie_pos))
   {
-    board->board[y][x] = board->temp_dummie;
-    board->temp_dummie = board->board[std::get<0>(new_dummie_pos)][std::get<1>(new_dummie_pos)];
-    board->board[std::get<0>(new_dummie_pos)][std::get<1>(new_dummie_pos)] = Pakmen::DUMMIE_GHOST_CELL;
+    int old_cell = board->board[new_y][new_x];
+    int ghost_cell = board->board[y][x];
+
+    board->board[new_y][new_x] = ghost_cell;
+    board->board[y][x] = old_cell;
   }
 }
 
@@ -254,11 +260,17 @@ void move_normal_ghost(Pakmen::GameBoard* board, std::tuple<int, int> user_pos)
     new_ghost_pos = std::make_tuple(ghost_y, ghost_x + 1);
   }
 
+  int new_y, new_x;
+
+  std::tie (new_y, new_x) = new_ghost_pos;
+
   if (Pakmen::is_ghost_movable_cell(board, new_ghost_pos))
   {
-    board->board[ghost_y][ghost_x] = board->temp_ghost;
-    board->temp_ghost = board->board[std::get<0>(new_ghost_pos)][std::get<1>(new_ghost_pos)];
-    board->board[std::get<0>(new_ghost_pos)][std::get<1>(new_ghost_pos)] = Pakmen::GHOST_CELL;
+    int old_cell = board->board[new_y][new_x];
+    int ghost_cell = board->board[ghost_y][ghost_x];
+
+    board->board[new_y][new_x] = ghost_cell;
+    board->board[ghost_y][ghost_x] = old_cell;
   }
 }
 
