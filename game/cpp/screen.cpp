@@ -183,6 +183,12 @@ bool Pakmen::move_user(Pakmen::GameBoard *board, string action)
     }
   }
   move_ghosts(board, user_pos);
+  if(std::get<0>(Pakmen::find_object(board, Pakmen::GHOST_CELL)) == -1){
+    board->board[3][9] = Pakmen::GHOST_CELL;
+  }
+  if(std::get<0>(Pakmen::find_object(board, Pakmen::DUMMIE_GHOST_CELL)) == -1){
+    board->board[3][3] = Pakmen::DUMMIE_GHOST_CELL;
+  }
   return true;
 }
 
