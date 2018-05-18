@@ -37,9 +37,9 @@ void Pakmen::finish_screen(bool lost)
 
   if(lost){
     current_score = 0;
-    printw("Perdeu irmao!");
+    printw("Lost, brother!\nPress ENTER to continue!");
   }else{
-    printw("Congratulations! You won!\nPress ENTER to finish!");
+    printw("Congratulations! You won!\nPress ENTER to continue!");
   }
 
   getch();
