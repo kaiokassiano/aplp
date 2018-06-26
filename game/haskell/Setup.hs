@@ -1,2 +1,2 @@
-import Distribution.Simple
+import app.Main
 main = defaultMain
