@@ -1,6 +1,6 @@
 module Main where
 
-import Lib
+import Pakmen
 
 main :: IO State
 main = pakmen

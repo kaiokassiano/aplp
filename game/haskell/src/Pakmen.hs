@@ -1,18 +1,18 @@
-module Lib (
+module Pakmen (
   pakmen,
   State
 ) where
 
-import UI.HSCurses.Curses
+import UI.HSCurses.Curses hiding (board)
 import UI.HSCurses.CursesHelper
 import UI.HSCurses.Logging
-import UI.HSCurses.Widgets
+import qualified UI.HSCurses.Widgets
 import System.Exit
 import Control.Monad
 
 type Cell = String
 type Row = [Cell]
-type Board = [Lib.Row]
+type Board = [Row]
 
 wallCell = "#"
 eatableCell = "."
@@ -61,7 +61,7 @@ pakmen = do
 
 initialState :: IO State
 initialState = return State {
-  Lib.board = boardCells,
+  board = boardCells,
   input = Nothing
 }
 
@@ -70,7 +70,7 @@ cell x y = boardCells !! x !! y
 
 gameOver :: State -> Bool
 gameOver (State {
-    Lib.board = boardCurrent
+    board = boardCurrent
   })
   | otherwise = False
 
