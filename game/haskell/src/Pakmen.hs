@@ -11,7 +11,7 @@ import System.Exit
 import Control.Monad.Loops
 import Control.Monad
 
-data Cell = Wall | Food | Cherry | Pacman | Ghost
+data Cell = Wall | Food | Cherry | Pacman | Ghost | Empty
 type Row = [Cell]
 type Board = [Row]
 type Vector = (Int, Int)
@@ -22,6 +22,7 @@ instance Show Cell where
   show Cherry = "C"
   show Pacman = "U"
   show Ghost = "G"
+  show Empty = " "
 
 boardHeight = 13
 boardWidth = 9
