@@ -8,65 +8,63 @@ import UI.HSCurses.CursesHelper
 import UI.HSCurses.Logging
 import qualified UI.HSCurses.Widgets
 import System.Exit
+import Control.Monad.Loops
 import Control.Monad
 
-type Cell = String
+data Cell = Wall | Food | Cherry | Pacman | Ghost
 type Row = [Cell]
 type Board = [Row]
+type Vector = (Int, Int)
 
-wallCell = "#"
-eatableCell = "."
-userCell = "U"
+instance Show Cell where
+  show Wall = "#"
+  show Food = "."
+  show Cherry = "C"
+  show Pacman = "U"
+  show Ghost = "G"
+
 boardHeight = 13
 boardWidth = 9
+
 boardCells = [
-    [wallCell, wallCell, wallCell, wallCell, wallCell, wallCell, wallCell, wallCell, wallCell],
-    [wallCell, eatableCell, eatableCell, eatableCell, eatableCell, eatableCell, eatableCell, eatableCell, wallCell],
-    [wallCell, eatableCell, eatableCell, eatableCell, eatableCell, eatableCell, eatableCell, eatableCell, wallCell],
-    [wallCell, eatableCell, eatableCell, eatableCell, eatableCell, eatableCell, eatableCell, eatableCell, wallCell],
-    [wallCell, eatableCell, wallCell, wallCell, eatableCell, wallCell, wallCell, eatableCell, wallCell],
-    [wallCell, eatableCell, eatableCell, wallCell, userCell, wallCell, eatableCell, eatableCell, wallCell],
-    [wallCell, eatableCell, wallCell, wallCell, eatableCell, wallCell, wallCell, eatableCell, wallCell],
-    [wallCell, eatableCell, eatableCell, eatableCell, eatableCell, eatableCell, eatableCell, eatableCell, wallCell],
-    [wallCell, eatableCell, eatableCell, eatableCell, eatableCell, eatableCell, eatableCell, eatableCell, wallCell],
-    [wallCell, eatableCell, eatableCell, eatableCell, eatableCell, eatableCell, eatableCell, eatableCell, wallCell],
-    [wallCell, eatableCell, eatableCell, eatableCell, eatableCell, eatableCell, eatableCell, eatableCell, wallCell],
-    [wallCell, eatableCell, eatableCell, eatableCell, eatableCell, eatableCell, eatableCell, eatableCell, wallCell],
-    [wallCell, wallCell, wallCell, wallCell, wallCell, wallCell, wallCell, wallCell, wallCell]]
+    [Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall],
+    [Wall, Food, Food, Food, Food, Food, Food, Food, Wall],
+    [Wall, Food, Food, Food, Food, Food, Food, Food, Wall],
+    [Wall, Food, Food, Food, Food, Food, Food, Food, Wall],
+    [Wall, Food, Wall, Wall, Food, Wall, Wall, Food, Wall],
+    [Wall, Food, Food, Wall, Pacman, Wall, Food, Food, Wall],
+    [Wall, Food, Wall, Wall, Food, Wall, Wall, Food, Wall],
+    [Wall, Food, Food, Food, Food, Food, Food, Food, Wall],
+    [Wall, Food, Food, Food, Food, Food, Food, Food, Wall],
+    [Wall, Food, Food, Food, Food, Food, Food, Food, Wall],
+    [Wall, Food, Food, Food, Food, Food, Food, Food, Wall],
+    [Wall, Food, Food, Food, Food, Food, Food, Food, Wall],
+    [Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall, Wall]]
 
 data State = State {
   board :: Board,
-  input :: Maybe Char
+  input :: Maybe Char,
+  height :: Int,
+  width :: Int
 }
 
 pakmen :: IO State
 pakmen = do
-    putStrLn $ cell 0 0
-    mainwin <- initScr
+    win <- initScr
     echo False
-    keypad mainwin True
-
-    initScreen mainwin
-    let y = boardHeight + 1
-    mvWAddStr mainwin y 0 "Press key 'q' to quit..."
-    refresh
-    forever $ do
-        c <- getCh
-        if c == KeyChar 'q'
-          then delWin mainwin >> endWin >> exitWith ExitSuccess
-        --   else if c `elem` ['w', 's', 'a', 'd']
-        --     then move c
-            else do
-                refresh
+    keypad win True
+    initialState >>= iterateUntilM gameOver (loopStep win)
 
 initialState :: IO State
 initialState = return State {
   board = boardCells,
-  input = Nothing
+  input = Nothing,
+  height = boardHeight,
+  width = boardWidth
 }
 
-cell :: Int -> Int -> Cell
-cell x y = boardCells !! x !! y
+cell :: Int -> Int -> String
+cell x y = show $ boardCells !! x !! y
 
 gameOver :: State -> Bool
 gameOver (State {
@@ -74,14 +72,29 @@ gameOver (State {
   })
   | otherwise = False
 
-printBoard :: Window -> Int -> Int -> IO()
-printBoard window x y =
-    when(x < boardHeight && y < boardWidth) $ do
-    mvWAddStr window x y $ cell x y
-    let x' = x + 1
-    let y' = y + 1
-    printBoard window x' y
-    printBoard window x y'
+loopStep :: Window -> State -> IO State
+loopStep win state = do
+  displayState win state
+  getCh >>= \ input ->
+    return $ updateState state (inputToTuple input)
 
-initScreen mainwin = do
-    printBoard mainwin 0 0
+inputToTuple :: Key -> Vector
+inputToTuple (KeyChar 'w') = (-1, 0)
+inputToTuple (KeyChar 's') = (1, 0)
+inputToTuple (KeyChar 'a') = (0, -1)
+inputToTuple (KeyChar 'd') = (0, 1)
+
+updateState :: State -> Vector -> State
+updateState state key = state
+
+displayState :: Window -> State -> IO State
+displayState win state = do
+  wclear win
+  wAddStr win (renderBoard state)
+  refresh
+  return state
+
+renderBoard :: State -> String
+renderBoard state =
+  unlines $ map (foldl (\acc x -> acc ++ show x) []) (board state)
+
