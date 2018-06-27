@@ -22,7 +22,7 @@ wallPositions = [
   (1, 3), (2, 3), (4, 3), (5, 3),
   (2, 4), (4, 4),
   (1, 5), (2, 5), (4, 5), (5, 5)]
-cherriesPositions = []
+cherriesPositions = [(3, 10)]
 
 data State = State {
   input :: Maybe Char,
@@ -33,7 +33,8 @@ data State = State {
   ghosts :: [Vector],
   walls :: [Vector],
   fruits :: [Vector],
-  cherries :: [Vector]
+  cherries :: [Vector],
+  points :: Int
 }
 
 pakmen :: IO State
@@ -53,7 +54,8 @@ initialState = return State {
   ghosts = [],
   walls = wallPositions,
   cherries = cherriesPositions,
-  fruits = getAvailableVectors boardWidth boardHeight $ [pacmanPosition] ++ wallPositions ++ cherriesPositions
+  fruits = getAvailableVectors boardWidth boardHeight $ [pacmanPosition] ++ wallPositions ++ cherriesPositions,
+  points = 0
 }
 
 getAvailableVectors :: Int -> Int -> [Vector] -> [Vector]
@@ -83,11 +85,31 @@ inputToTuple _ = Nothing
 
 updateState :: State -> Maybe Vector -> State
 updateState state move
-  = updatePacman $ updateMove state move
+  = updateCherry $ updateFruits $ updatePacman $ updateMove state move
+
+updateCherry :: State -> State
+updateCherry state
+  | pacmanHasFruit (pacman state) (cherries state) = state {
+      cherries = [cherry | cherry <- (cherries state), cherry /= (pacman state)],
+      points = (points state) + 10
+    }
+  | otherwise = state
+
+updateFruits :: State -> State
+updateFruits state
+  | pacmanHasFruit (pacman state) (fruits state) = state {
+      fruits = [fruit | fruit <- (fruits state), fruit /= (pacman state)],
+      points = (points state) + 1
+    }
+  | otherwise = state
+
+pacmanHasFruit :: Vector -> [Vector] -> Bool
+pacmanHasFruit pacmanPosition fruits
+  = pacmanPosition `elem` fruits
 
 updateMove :: State -> Maybe Vector -> State
 updateMove state inputMove@(Just move) = state { move = inputMove }
-updateMove state _ = state
+updateMove state _ = state { move = Nothing }
 
 updatePacman :: State -> State
 updatePacman state@(State { move = (Just moveVector) })
@@ -109,8 +131,14 @@ displayState :: Window -> State -> IO State
 displayState win state = do
   wclear win
   wAddStr win (renderBoard state)
+  addLn
+  wAddStr win (renderPoints state)
   refresh
   return state
+
+renderPoints :: State -> String
+renderPoints state =
+  "Points: " ++ show (points state) ++ "\n"
 
 renderBoard :: State -> String
 renderBoard state
