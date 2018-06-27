@@ -75,10 +75,10 @@ loopStep win state = do
     return $ updateState state (inputToTuple input)
 
 inputToTuple :: Key -> Maybe Vector
-inputToTuple (KeyChar 'w') = Just (-1, 0)
-inputToTuple (KeyChar 's') = Just (1, 0)
-inputToTuple (KeyChar 'a') = Just (0, -1)
-inputToTuple (KeyChar 'd') = Just (0, 1)
+inputToTuple (KeyChar 'w') = Just (0, -1)
+inputToTuple (KeyChar 's') = Just (0, 1)
+inputToTuple (KeyChar 'a') = Just (-1, 0)
+inputToTuple (KeyChar 'd') = Just (1, 0)
 inputToTuple _ = Nothing
 
 updateState :: State -> Maybe Vector -> State
@@ -90,7 +90,20 @@ updateMove state inputMove@(Just move) = state { move = inputMove }
 updateMove state _ = state
 
 updatePacman :: State -> State
-updatePacman state@(State { move = (Just vector) }) = state
+updatePacman state@(State { move = (Just moveVector) })
+  | hitWall (pacman state) moveVector (width state) (height state) (walls state) = state
+  | otherwise = state { pacman = (pacman state) `vectorAdd` moveVector }
+updatePacman state = state
+
+hitWall :: Vector -> Vector -> Int -> Int -> [Vector] -> Bool
+hitWall pacmanCurrent@(pacmanX, pacmanY) moveVector@(moveX, moveY) width height walls
+  | pacmanX + moveX < 0 || pacmanY + moveY < 0 = True
+  | pacmanX + moveX >= width || pacmanY + moveY >= height = True
+  | pacmanCurrent `vectorAdd` moveVector `elem` walls = True
+  | otherwise = False
+
+vectorAdd :: Vector -> Vector -> Vector
+vectorAdd (x1, y1) (x2, y2) = (x1 + x2, y1 + y2)
 
 displayState :: Window -> State -> IO State
 displayState win state = do
