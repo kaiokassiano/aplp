@@ -130,9 +130,9 @@ vectorAdd (x1, y1) (x2, y2) = (x1 + x2, y1 + y2)
 displayState :: Window -> State -> IO State
 displayState win state = do
   wclear win
-  wAddStr win (renderBoard state)
+  wAddStr win $ renderBoard state
   addLn
-  wAddStr win (renderPoints state)
+  wAddStr win $ renderPoints state
   refresh
   return state
 
@@ -153,7 +153,7 @@ applyBorder width rows =
 
 renderRow :: State -> [Vector] -> String
 renderRow state =
-  map (characterForPosition state)
+  map $ characterForPosition state
 
 characterForPosition :: State -> Vector -> Char
 characterForPosition state position
