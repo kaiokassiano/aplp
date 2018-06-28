@@ -15,14 +15,18 @@ type Vector = (Int, Int)
 type Row = [Vector]
 type Board = [Row]
 
-boardHeight = 11
-boardWidth = 7
-pacmanPosition = (3, 4)
+boardHeight = 15
+boardWidth = 13
+pacmanPosition = (6, 3)
 wallPositions = [
-  (1, 3), (2, 3), (4, 3), (5, 3),
-  (2, 4), (4, 4),
-  (1, 5), (2, 5), (4, 5), (5, 5)]
-cherriesPositions = [(3, 10)]
+  (2, 1), (3, 1), (2, 2), (6, 1), (9, 1), (10, 1), (10, 2),
+  (4, 3), (8, 3),
+  (2, 6), (3, 6), (6, 5), (6, 6), (9, 6), (10, 6),
+  (2, 8), (3, 8), (6, 9), (6, 8), (9, 8), (10, 8),
+  (4, 11), (8, 11),
+  (2, 13), (3, 13), (2, 12), (6, 13), (9, 13), (10, 13), (10, 12)]
+cherriesPositions = [(9, 12), (3, 12)]
+ghostsPositions = [(1, 7), (11, 7)]
 
 data State = State {
   input :: Maybe Char,
@@ -51,10 +55,10 @@ initialState = return State {
   width = boardWidth,
   move = Nothing,
   pacman = pacmanPosition,
-  ghosts = [],
+  ghosts = ghostsPositions,
   walls = wallPositions,
   cherries = cherriesPositions,
-  fruits = getAvailableVectors boardWidth boardHeight $ [pacmanPosition] ++ wallPositions ++ cherriesPositions,
+  fruits = getAvailableVectors boardWidth boardHeight $ [pacmanPosition] ++ wallPositions ++ cherriesPositions ++ ghostsPositions,
   points = 0
 }
 
