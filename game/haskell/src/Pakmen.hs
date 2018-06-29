@@ -121,6 +121,25 @@ updatePacman state@(State { move = (Just moveVector) })
   | otherwise = state { pacman = (pacman state) `vectorAdd` moveVector }
 updatePacman state = state
 
+
+updateGhosts :: State -> State
+updateGhosts state@(State {ghosts = currentGhosts}) = state { ghosts = updateGhostAction currentGhosts (pacman state) (width state) (height state) (walls state) }
+
+updateGhostAction :: [Vector] -> Vector -> Int -> [Vector] -> [Vector] -> [Vector]
+updateGhostAction currentGhostPositions pacmanPosition boardSize walls = [vectorAdd s t | (s, t) <- zip currentGhostPositions newActions]
+    where newActions = [trackPacman x y boardSize walls| (x, y) <- getNewActions currentGhostPositions pacmanPosition]
+
+getNewActions currentGhostPositions pacmanPosition = [(x,y) | x <- currentGhostPositions, y <- [pacmanPosition]]
+
+trackPacman :: Vector -> Vector -> Int -> [Vector] -> Vector
+trackPacman (ghostPositionX, ghostPositionY) (pacmanPositionX, pacmanPositionY) boardSize walls
+    | (abs(ghostPositionY - pacmanPositionY) == 1 && (ghostPositionX - pacmanPositionX) == 0) || (abs(ghostPositionX - pacmanPositionX) == 1 && (ghostPositionY - pacmanPositionY) == 0) = vectorSubtract (pacmanPositionX, pacmanPositionY) (ghostPositionX, ghostPositionY)
+    | ghostPositionY <= pacmanPositionY && not (hitWall (ghostPositionX, ghostPositionY) (0,  1) boardSize walls)= ( 0,  1)
+    | ghostPositionY >= pacmanPositionY && not (hitWall (ghostPositionX, ghostPositionY) (0,  -1) boardSize walls)=  (0,  -1)
+    | ghostPositionX <= pacmanPositionX && not (hitWall (ghostPositionX, ghostPositionY) (1,  0) boardSize walls)= (1,  0)
+    | otherwise = ( -1, 0)
+
+
 hitWall :: Vector -> Vector -> Int -> Int -> [Vector] -> Bool
 hitWall pacmanCurrent@(pacmanX, pacmanY) moveVector@(moveX, moveY) width height walls
   | pacmanX + moveX < 0 || pacmanY + moveY < 0 = True
