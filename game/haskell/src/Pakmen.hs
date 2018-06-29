@@ -46,7 +46,15 @@ pakmen = do
     win <- initScr
     echo False
     keypad win True
-    initialState >>= iterateUntilM gameOver (loopStep win)
+    initialState
+      >>= iterateUntilM gameOver (loopStep win)
+      >>= \ state -> endWin
+        >> delWin win
+        >> if length (fruits state) == 0 then
+          displayVictoryScreen state
+        else do
+          displayLoseScreen
+          return state
 
 initialState :: IO State
 initialState = return State {
@@ -69,9 +77,11 @@ getAvailableVectors width height occupied =
 gameOver :: State -> Bool
 gameOver (State {
     pacman = pacmanCurrent,
-    ghosts = ghostsCurrent
+    ghosts = ghostsCurrent,
+    fruits = fruitsCurrent
   })
   | pacmanCurrent `elem` ghostsCurrent = True
+  | length fruitsCurrent == 0 = True
   | otherwise = False
 
 loopStep :: Window -> State -> IO State
@@ -131,6 +141,15 @@ hitWall pacmanCurrent@(pacmanX, pacmanY) moveVector@(moveX, moveY) width height 
 vectorAdd :: Vector -> Vector -> Vector
 vectorAdd (x1, y1) (x2, y2) = (x1 + x2, y1 + y2)
 
+displayVictoryScreen :: State -> IO State
+displayVictoryScreen state = do
+  putStrLn $ "Congratulations! You've won with a score of " ++ show (points state)
+  return state
+
+displayLoseScreen :: IO ()
+displayLoseScreen = do
+  putStrLn "You've lost! Run the game again if you wish to play more"
+
 displayState :: Window -> State -> IO State
 displayState win state = do
   wclear win
@@ -142,7 +161,7 @@ displayState win state = do
 
 renderPoints :: State -> String
 renderPoints state =
-  "Points: " ++ show (points state) ++ "\n"
+  "Score: " ++ show (points state) ++ "\n"
 
 renderBoard :: State -> String
 renderBoard state
