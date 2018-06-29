@@ -26,7 +26,7 @@ wallPositions = [
   (4, 11), (8, 11),
   (2, 13), (3, 13), (2, 12), (6, 13), (9, 13), (10, 13), (10, 12)]
 cherriesPositions = [(9, 12), (3, 12)]
-ghostsPositions = [(1, 7), (11, 7)]
+ghostsPositions = []
 
 data State = State {
   input :: Maybe Char,
@@ -58,7 +58,7 @@ initialState = return State {
   ghosts = ghostsPositions,
   walls = wallPositions,
   cherries = cherriesPositions,
-  fruits = getAvailableVectors boardWidth boardHeight $ [pacmanPosition] ++ wallPositions ++ cherriesPositions ++ ghostsPositions,
+  fruits = getAvailableVectors boardWidth boardHeight $ [pacmanPosition] ++ wallPositions ++ cherriesPositions,
   points = 0
 }
 
@@ -161,7 +161,7 @@ renderRow state =
 
 characterForPosition :: State -> Vector -> Char
 characterForPosition state position
-  | (pacman state) == position = 'U'
+  | (pacman state) == position = 'P'
   | position `elem` walls state = '#'
   | position `elem` fruits state = '.'
   | position `elem` ghosts state = 'G'
