@@ -27,6 +27,7 @@ wallPositions = [
   (2, 13), (3, 13), (2, 12), (6, 13), (9, 13), (10, 13), (10, 12)]
 cherriesPositions = [(9, 12), (3, 12)]
 ghostsPositions = [(1, 7), (11, 7)]
+powerPositions= [(6, 14)]
 
 data State = State {
   input :: Maybe Char,
@@ -38,7 +39,10 @@ data State = State {
   walls :: [Vector],
   fruits :: [Vector],
   cherries :: [Vector],
-  points :: Int
+  points :: Int,
+  powers :: [Vector],
+  -- How many turns left of invencibility
+  superTurns :: Int
 }
 
 pakmen :: IO State
@@ -66,8 +70,11 @@ initialState = return State {
   ghosts = ghostsPositions,
   walls = wallPositions,
   cherries = cherriesPositions,
-  fruits = getAvailableVectors boardWidth boardHeight $ [pacmanPosition] ++ wallPositions ++ cherriesPositions ++ ghostsPositions,
-  points = 0
+  fruits = getAvailableVectors boardWidth boardHeight
+    $ [pacmanPosition] ++ wallPositions ++ cherriesPositions ++ ghostsPositions ++ powerPositions,
+  points = 0,
+  powers = powerPositions,
+  superTurns = 0
 }
 
 getAvailableVectors :: Int -> Int -> [Vector] -> [Vector]
@@ -78,16 +85,20 @@ gameOver :: State -> Bool
 gameOver (State {
     pacman = pacmanCurrent,
     ghosts = ghostsCurrent,
-    fruits = fruitsCurrent
+    fruits = fruitsCurrent,
+    superTurns = superTurnsCurrent
   })
-  | pacmanCurrent `elem` ghostsCurrent = True
+  | superTurnsCurrent == 0 && pacmanCurrent `elem` ghostsCurrent = True
   | length fruitsCurrent == 0 = True
   | otherwise = False
 
 loopStep :: Window -> State -> IO State
 loopStep win state = do
   displayState win state
-  getCh >>= \ input ->
+  input <- getCh
+  if inputToTuple input == Nothing then
+    return state
+  else
     return $ updateState state (inputToTuple input)
 
 inputToTuple :: Key -> Maybe Vector
@@ -98,8 +109,20 @@ inputToTuple (KeyChar 'd') = Just (1, 0)
 inputToTuple _ = Nothing
 
 updateState :: State -> Maybe Vector -> State
-updateState state move
-  = updateCherry $ updateFruits $ updatePacman $ updateMove state move
+updateState state move = updatePower
+  $ updateCherry
+  $ updateFruits
+  $ updatePacman
+  $ updateMove state move
+
+updatePower :: State -> State
+updatePower state
+  | pacmanHasFruit (pacman state) (powers state) = state {
+      superTurns = 10,
+      powers = [power | power <- (powers state), power /= (pacman state)]
+    }
+  | (superTurns state) > 0 = state { superTurns = (superTurns state) - 1 }
+  | otherwise = state
 
 updateCherry :: State -> State
 updateCherry state
@@ -180,11 +203,13 @@ renderRow state =
 
 characterForPosition :: State -> Vector -> Char
 characterForPosition state position
-  | (pacman state) == position = 'U'
+  | (pacman state) == position && (superTurns state) == 0 = 'U'
+  | (pacman state) == position = 'Û'
   | position `elem` walls state = '#'
   | position `elem` fruits state = '.'
   | position `elem` ghosts state = 'G'
   | position `elem` cherries state = 'C'
+  | position `elem` powers state = '*'
   | otherwise = ' '
 
 blankBoard :: Int -> Int -> [[Vector]]
