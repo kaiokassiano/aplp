@@ -109,6 +109,7 @@ print_matrix(X, Y):-
   ).
 
 display_state:-
+  tty_clear,
   height(H),
   width(W),
   J is W - 1,
@@ -120,6 +121,60 @@ display_state:-
 
 % Main
 
+can_move(X, Y):-
+  not(call(wall(pos(X, Y)))),
+  X >= 0,
+  Y >= 0,
+  width(W),
+  height(H),
+  X < W,
+  Y < H.
+
+move_pacman(_).
+
+move_pacman(1):-
+  pacman(pos(PacmanX, PacmanY)),
+  K is PacmanY - 1,
+  can_move(PacmanX, K) ->
+    retract(pacman(pos(PacmanX, PacmanY))),
+    assertz(pacman(pos(PacmanX, K)));
+  true.
+
+move_pacman(2):-
+  pacman(pos(PacmanX, PacmanY)),
+  J is PacmanX - 1,
+  can_move(J, PacmanY) ->
+    retract(pacman(pos(PacmanX, PacmanY))),
+    assertz(pacman(pos(J, PacmanY)));
+  true.
+
+move_pacman(3):-
+  pacman(pos(PacmanX, PacmanY)),
+  K is PacmanY + 1,
+  can_move(PacmanX, K) ->
+    retract(pacman(pos(PacmanX, PacmanY))),
+    assertz(pacman(pos(PacmanX, K)));
+  true.
+
+move_pacman(4):-
+  pacman(pos(PacmanX, PacmanY)),
+  J is PacmanX + 1,
+  can_move(J, PacmanY) ->
+    retract(pacman(pos(PacmanX, PacmanY))),
+    assertz(pacman(pos(J, PacmanY)));
+  true.
+
+play:-
+  game_over ->
+    write("Game Over!"),
+    nl,
+    halt(0);
+  read(P),
+  move_pacman(P),
+  % move_ghosts,
+  display_state,
+  play.
+
 game_over:-
   not(call(fruit(_)));
   not(call(pacman(_))).
@@ -128,5 +183,6 @@ game_over:-
 main:-
   initialize_fruits,
   display_state,
+  play,
   halt(0).
 
