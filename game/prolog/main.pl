@@ -47,7 +47,14 @@ power(pos(6, 14)).
 % Display
 
 new_line(Y):-
-  Y > 0 -> nl; true.
+  Y > 0 -> write("#"), nl; print_horizontal_border.
+
+print_horizontal_border:-
+  write("#############"),
+  nl.
+
+left_wall(K):-
+  K == 0 -> write("#"); true.
 
 print_matrix(_, -1).
 print_matrix(0, Y):-
@@ -59,6 +66,7 @@ print_matrix(0, Y):-
 print_matrix(X, Y):-
   K is X - 1,
   print_matrix(K, Y),
+  left_wall(K),
   (
     wall(pos(X, Y)), write("#");
     cherry(pos(X, Y)), write("C");
@@ -70,7 +78,9 @@ print_matrix:-
   height(H),
   width(W),
   print_matrix(W, H),
-  nl.
+  write("#"),
+  nl,
+  print_horizontal_border.
 
 % Main
 
