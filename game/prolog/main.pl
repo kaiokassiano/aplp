@@ -1,6 +1,6 @@
 % Declaração do tabuleiro
 
-:- dynamic pacman/1, score/1, cherry/1.
+:- dynamic pacman/1, score/1, cherry/1, ghost/1, power/1.
 
 height(15).
 width(13).
