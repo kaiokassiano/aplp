@@ -3,8 +3,6 @@
 height(15).
 width(13).
 
-pacman(pos(6, 3)).
-
 wall(pos(2, 1)).
 wall(pos(3, 1)).
 wall(pos(2, 2)).
@@ -130,9 +128,8 @@ can_move(X, Y):-
   X < W,
   Y < H.
 
-move_pacman(_).
-
-move_pacman(1):-
+% Up
+move_pacman(8):-
   pacman(pos(PacmanX, PacmanY)),
   K is PacmanY - 1,
   can_move(PacmanX, K) ->
@@ -140,7 +137,8 @@ move_pacman(1):-
     assertz(pacman(pos(PacmanX, K)));
   true.
 
-move_pacman(2):-
+% Left
+move_pacman(4):-
   pacman(pos(PacmanX, PacmanY)),
   J is PacmanX - 1,
   can_move(J, PacmanY) ->
@@ -148,7 +146,8 @@ move_pacman(2):-
     assertz(pacman(pos(J, PacmanY)));
   true.
 
-move_pacman(3):-
+% Down
+move_pacman(2):-
   pacman(pos(PacmanX, PacmanY)),
   K is PacmanY + 1,
   can_move(PacmanX, K) ->
@@ -156,13 +155,16 @@ move_pacman(3):-
     assertz(pacman(pos(PacmanX, K)));
   true.
 
-move_pacman(4):-
+% Right
+move_pacman(6):-
   pacman(pos(PacmanX, PacmanY)),
   J is PacmanX + 1,
   can_move(J, PacmanY) ->
     retract(pacman(pos(PacmanX, PacmanY))),
     assertz(pacman(pos(J, PacmanY)));
   true.
+
+move_pacman(_).
 
 play:-
   game_over ->
@@ -177,10 +179,13 @@ play:-
 
 game_over:-
   not(call(fruit(_)));
-  not(call(pacman(_))).
+  not(call(pacman(_)));
+  pacman(pos(PacmanX, PacmanY)),
+  ghost(pos(PacmanX, PacmanY)).
 
 :- initialization(main).
 main:-
+  assertz(pacman(pos(6, 3))),
   initialize_fruits,
   display_state,
   play,
