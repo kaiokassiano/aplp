@@ -44,6 +44,34 @@ ghost(pos(11, 7)).
 
 power(pos(6, 14)).
 
+% Fruits
+
+create_fruit(X, Y):-
+  (
+    not(call(wall(pos(X, Y)))),
+    not(call(pacman(pos(X, Y)))),
+    not(call(cherry(pos(X, Y)))),
+    not(call(power(pos(X, Y)))),
+    assertz(fruit(pos(X, Y)))
+  );
+  true.
+
+initialize_fruits(_, -1).
+initialize_fruits(0, Y):-
+  K is Y - 1,
+  width(W),
+  initialize_fruits(W, K).
+
+initialize_fruits(X, Y):-
+  create_fruit(X, Y),
+  K is X - 1,
+  initialize_fruits(K, Y).
+
+initialize_fruits:-
+  width(W),
+  height(H),
+  initialize_fruits(W, H).
+
 % Display
 
 new_line(Y):-
@@ -69,12 +97,15 @@ print_matrix(X, Y):-
   left_wall(K),
   (
     wall(pos(X, Y)), write("#");
-    cherry(pos(X, Y)), write("C");
     pacman(pos(X, Y)), write("P");
-    write(".")
+    ghost(pos(X, Y)), write("G");
+    cherry(pos(X, Y)), write("C");
+    power(pos(X, Y)), write("*");
+    fruit(pos(X, Y)), write(".");
+    write(" ")
   ).
 
-print_matrix:-
+display_state:-
   height(H),
   width(W),
   print_matrix(W, H),
@@ -86,6 +117,7 @@ print_matrix:-
 
 :- initialization(main).
 main:-
-  print_matrix,
+  initialize_fruits,
+  display_state,
   halt(0).
 
