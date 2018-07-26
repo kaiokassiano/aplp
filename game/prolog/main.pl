@@ -128,43 +128,43 @@ can_move(X, Y):-
   X < W,
   Y < H.
 
+move_pacman(X, Y):-
+  can_move(X, Y) ->
+    retractall(pacman(pos(_, _))),
+    assertz(pacman(pos(X, Y)));
+  true.
+
 % Up
-move_pacman(8):-
+update_pacman(8):-
   pacman(pos(PacmanX, PacmanY)),
   K is PacmanY - 1,
-  can_move(PacmanX, K) ->
-    retract(pacman(pos(PacmanX, PacmanY))),
-    assertz(pacman(pos(PacmanX, K)));
-  true.
+  move_pacman(PacmanX, K).
 
 % Left
-move_pacman(4):-
+update_pacman(4):-
   pacman(pos(PacmanX, PacmanY)),
   J is PacmanX - 1,
-  can_move(J, PacmanY) ->
-    retract(pacman(pos(PacmanX, PacmanY))),
-    assertz(pacman(pos(J, PacmanY)));
-  true.
+  move_pacman(J, PacmanY).
 
 % Down
-move_pacman(2):-
+update_pacman(2):-
   pacman(pos(PacmanX, PacmanY)),
   K is PacmanY + 1,
-  can_move(PacmanX, K) ->
-    retract(pacman(pos(PacmanX, PacmanY))),
-    assertz(pacman(pos(PacmanX, K)));
-  true.
+  move_pacman(PacmanX, K).
 
 % Right
-move_pacman(6):-
+update_pacman(6):-
   pacman(pos(PacmanX, PacmanY)),
   J is PacmanX + 1,
-  can_move(J, PacmanY) ->
-    retract(pacman(pos(PacmanX, PacmanY))),
-    assertz(pacman(pos(J, PacmanY)));
-  true.
+  move_pacman(J, PacmanY).
 
-move_pacman(_).
+update_pacman(_).
+
+update_fruits:-
+  pacman(pos(X, Y)),
+  fruit(pos(X, Y)) ->
+    retract(fruit(pos(X, Y))); % TODO: also update score
+  true.
 
 play:-
   game_over ->
@@ -172,7 +172,8 @@ play:-
     nl,
     halt(0);
   read(P),
-  move_pacman(P),
+  update_pacman(P),
+  update_fruits,
   % move_ghosts,
   display_state,
   play.
