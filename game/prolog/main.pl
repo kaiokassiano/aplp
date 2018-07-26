@@ -1,7 +1,7 @@
 % Declaração do tabuleiro
 
-height(14).
-width(11).
+height(15).
+width(13).
 
 pacman(pos(6, 3)).
 
@@ -57,7 +57,7 @@ create_fruit(X, Y):-
   true.
 
 initialize_fruits(_, -1).
-initialize_fruits(0, Y):-
+initialize_fruits(-1, Y):-
   K is Y - 1,
   width(W),
   initialize_fruits(W, K).
@@ -70,7 +70,9 @@ initialize_fruits(X, Y):-
 initialize_fruits:-
   width(W),
   height(H),
-  initialize_fruits(W, H).
+  J is W - 1,
+  K is H - 1,
+  initialize_fruits(J, K).
 
 % Display
 
@@ -78,17 +80,18 @@ new_line(Y):-
   Y > 0 -> write("#"), nl; print_horizontal_border.
 
 print_horizontal_border:-
-  write("#############"),
+  write("###############"),
   nl.
 
 left_wall(K):-
-  K == 0 -> write("#"); true.
+  K == -1 -> write("#"); true.
 
 print_matrix(_, -1).
-print_matrix(0, Y):-
+print_matrix(-1, Y):-
   K is Y - 1,
   width(W),
-  print_matrix(W, K),
+  J is W - 1,
+  print_matrix(J, K),
   new_line(Y).
 
 print_matrix(X, Y):-
@@ -108,12 +111,18 @@ print_matrix(X, Y):-
 display_state:-
   height(H),
   width(W),
-  print_matrix(W, H),
+  J is W - 1,
+  K is H - 1,
+  print_matrix(J, K),
   write("#"),
   nl,
   print_horizontal_border.
 
 % Main
+
+game_over:-
+  not(call(fruit(_)));
+  not(call(pacman(_))).
 
 :- initialization(main).
 main:-
