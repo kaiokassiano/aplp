@@ -1,5 +1,7 @@
 % Declaração do tabuleiro
 
+:- dynamic pacman/1, score/1, cherry/1.
+
 height(15).
 width(13).
 
@@ -41,6 +43,10 @@ ghost(pos(1, 7)).
 ghost(pos(11, 7)).
 
 power(pos(6, 14)).
+
+pacman(pos(6, 3)).
+
+score(0).
 
 % Fruits
 
@@ -115,7 +121,12 @@ display_state:-
   print_matrix(J, K),
   write("#"),
   nl,
-  print_horizontal_border.
+  print_horizontal_border,
+  nl,
+  write("Score: "),
+  score(S),
+  write(S),
+  nl.
 
 % Main
 
@@ -163,7 +174,21 @@ update_pacman(_).
 update_fruits:-
   pacman(pos(X, Y)),
   fruit(pos(X, Y)) ->
-    retract(fruit(pos(X, Y))); % TODO: also update score
+    score(S),
+    NewScore is S + 1,
+    retract(score(S)),
+    assertz(score(NewScore)),
+    retract(fruit(pos(X, Y)));
+  true.
+
+update_cherry:-
+  pacman(pos(X, Y)),
+  cherry(pos(X, Y)) ->
+    score(S),
+    NewScore is S + 10,
+    retract(score(S)),
+    assertz(score(NewScore)),
+    retract(cherry(pos(X, Y)));
   true.
 
 play:-
@@ -174,6 +199,7 @@ play:-
   read(P),
   update_pacman(P),
   update_fruits,
+  update_cherry,
   % move_ghosts,
   display_state,
   play.
@@ -186,7 +212,6 @@ game_over:-
 
 :- initialization(main).
 main:-
-  assertz(pacman(pos(6, 3))),
   initialize_fruits,
   display_state,
   play,
