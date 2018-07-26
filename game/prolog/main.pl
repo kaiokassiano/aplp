@@ -104,8 +104,8 @@ print_matrix(X, Y):-
   left_wall(K),
   (
     wall(pos(X, Y)), write("#");
-    pacman(pos(X, Y)), write("P");
     ghost(pos(X, Y)), write("G");
+    pacman(pos(X, Y)), write("P");
     cherry(pos(X, Y)), write("C");
     power(pos(X, Y)), write("*");
     fruit(pos(X, Y)), write(".");
@@ -191,10 +191,20 @@ update_cherry:-
     retract(cherry(pos(X, Y)));
   true.
 
+print_game_over_message:-
+  tty_clear,
+  pacman(pos(X, Y)),
+  ghost(pos(X, Y)) ->
+    write("You've lost! Run the game again if you wish to play more."),
+    nl;
+  write("Congratulations! You've won with a score of "),
+  score(S),
+  write(S),
+  nl.
+
 play:-
   game_over ->
-    write("Game Over!"),
-    nl,
+    print_game_over_message,
     halt(0);
   read(P),
   update_pacman(P),
