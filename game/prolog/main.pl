@@ -206,6 +206,10 @@ play:-
   game_over ->
     print_game_over_message,
     halt(0);
+  nl,
+  write("Where do you want to go?"),
+  nl,
+  write("(enter 8, 2, 4, 6 to move up, down, left or right): "),
   read(P),
   update_pacman(P),
   update_fruits,
