@@ -1,6 +1,6 @@
 % Declaração do tabuleiro
 
-:- dynamic pacman/1, score/1, cherry/1, ghost/1, power/1.
+:- dynamic pacman/1, score/1, cherry/1, ghost/1, power/1, ghostDummie/1.
 
 height(15).
 width(13).
@@ -39,7 +39,7 @@ wall(pos(10, 12)).
 cherry(pos(9, 12)).
 cherry(pos(3, 12)).
 
-ghost(pos(1, 7)).
+ghostDummie(pos(1, 7)).
 ghost(pos(11, 7)).
 
 power(pos(6, 14)).
@@ -107,6 +107,7 @@ print_matrix(X, Y):-
     ghost(pos(X, Y)), write("G");
     pacman(pos(X, Y)), write("P");
     cherry(pos(X, Y)), write("C");
+    ghostDummie(pos(X, Y)), write("G");
     power(pos(X, Y)), write("*");
     fruit(pos(X, Y)), write(".");
     write(" ")
@@ -144,6 +145,70 @@ move_pacman(X, Y):-
     retractall(pacman(pos(_, _))),
     assertz(pacman(pos(X, Y)));
   true.
+
+move_ghost(X,Y):-
+  can_move(X, Y) ->
+    retractall(ghost(pos(_, _))),
+    assertz(ghost(pos(X, Y)));
+  true.
+
+move_ghost_dummie(X,Y):-
+  can_move(X, Y) ->
+    retractall(ghostDummie(pos(_, _))),
+    assertz(ghostDummie(pos(X, Y)));
+  true.
+
+update_ghost:-
+  pacman(pos(PacmanX, PacmanY)),
+  ghost(pos(GhostX, GhostY)),
+  (
+      GhostX =:= PacmanX -> % same column, approach line
+        (
+          GhostY < PacmanY ->
+            K is GhostY + 1, % move down
+            move_ghost(K, GhostY)
+          ;
+            K is GhostY - 1, % move up
+            move_ghost(K, GhostY)
+        )
+      ; GhostY =:= PacmanY -> % same line, approach column
+          (
+            GhostX < PacmanY -> % move right
+              K is GhostX + 1,
+              move_ghost(K, GhostY)
+            ;
+              K is GhostX - 1, % move left
+              move_ghost(K, GhostY)
+          )
+      ;  % not same line or column, approach column
+        (
+          GhostX < PacmanX -> % move right
+            K is GhostX + 1,
+            move_ghost(K, GhostY)
+          ;
+            K is GhostX - 1, % move left
+            move_ghost(K, GhostY)
+        )
+  ).
+
+
+update_ghost_dummie:-
+  ghostDummie(pos(GhostX, GhostY)),
+  random(0, 3, Move),
+  (
+      Move =:= 0 ->
+        K is GhostX - 1, % move left
+        move_ghost_dummie(K, GhostY)
+    ; Move =:= 1 ->
+        K is GhostX + 1, % move right
+        move_ghost_dummie(K, GhostY)
+    ; Move =:= 2 ->
+        K is GhostY - 1, % move up
+        move_ghost_dummie(GhostX, K)
+    ;   
+        K is GhostY + 1, % move down
+        move_ghost_dummie(GhostX, K)
+    ).
 
 % Up
 update_pacman(8):-
@@ -191,6 +256,7 @@ update_cherry:-
     retract(cherry(pos(X, Y)));
   true.
 
+
 print_game_over_message:-
   tty_clear,
   pacman(pos(X, Y)),
@@ -214,7 +280,8 @@ play:-
   update_pacman(P),
   update_fruits,
   update_cherry,
-  % move_ghosts,
+  update_ghost_dummie,
+  update_ghost,
   display_state,
   play.
 
