@@ -166,10 +166,10 @@ update_ghost:-
         (
           GhostY < PacmanY ->
             K is GhostY + 1, % move down
-            move_ghost(K, GhostY)
+            move_ghost(GhostX, K)
           ;
             K is GhostY - 1, % move up
-            move_ghost(K, GhostY)
+            move_ghost(GhostX, K)
         )
       ; GhostY =:= PacmanY -> % same line, approach column
           (
